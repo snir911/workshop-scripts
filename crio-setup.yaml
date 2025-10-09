@@ -1,0 +1,34 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  name: 99-worker-crio-download
+  labels:
+    machineconfiguration.openshift.io/role: kata-oc
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+        - path: /usr/local/bin/crio-setup.sh
+          mode: 0755
+          contents:
+            source: data:text/plain;charset=utf-8;base64,IyEvYmluL2Jhc2gKc2V0IC1ldW8gcGlwZWZhaWwKCiMgZm9yIG9jcCAxLjE2LjMwOiBwb2RtYW4gcHVsbCByZWdpc3RyeS5hY2Nlc3MucmVkaGF0LmNvbS91Ymk5L2dvLXRvb2xzZXQ6MS4yMS4xMwoKZXhwb3J0IEtVQkVDT05GSUc9L2V0Yy9rdWJlcm5ldGVzL2t1YmVjb25maWcKI29jcHZlcnNpb249NC4xNi4zMAprOHN2ZXJzaW9uPSIkKG9jIHZlcnNpb24gLW8ganNvbiB8IGpxIC1yICcuc2VydmVyVmVyc2lvbiB8ICJcKC5tYWpvcikuXCgubWlub3IpIicpIgojIC91c3IvYmluL2NyaW8gLS12ZXJzaW9uIHwgZ3JlcCAiR29WZXJzaW9uOiIgfCBzZWQgLUUgJ3MvLipnbyhbMC05Ll0rKS4qL1wxLycKCmdvdmVyc2lvbj0kKG9jIHZlcnNpb24gLW8ganNvbiB8IGpxIC1yICcuc2VydmVyVmVyc2lvbi5nb1ZlcnNpb24gfCBjYXB0dXJlKCJnbyg/PHZlcj5bMC05Ll0rKSIpIHwgLnZlcicpCklOU1RBTExfQ09NTUFORD0iZG5mIGluc3RhbGwgLXkgbWFrZSB3Z2V0IGdjYyBnY2MtYysrIG9wZW5zc2wgb3BlbnNzbC1kZXZlbCBnaXQgZ3BnbWUtZGV2ZWwgbGlic2VjY29tcC1kZXZlbCBnbGliYy1zdGF0aWMgY2xhbmctZGV2ZWwgZGV2aWNlLW1hcHBlci1kZXZlbCB4eiBwYXRjaCIgCgpta2RpciAtcCAvdG1wL2J1aWxkY3JpbwpwdXNoZCAvdG1wL2J1aWxkY3JpbwojIG1ha2UgdGhlIGJ1aWxkIGVudiBhbmQgYnVpbGQgY3Jpbwpwb2RtYW4gYnVpbGQgLXQgImJ1aWxkY3JpbyIgIC0gPDwgRU9GCkZST00gcmVnaXN0cnkuYWNjZXNzLnJlZGhhdC5jb20vdWJpOS9nby10b29sc2V0OiR7Z292ZXJzaW9ufQoKVVNFUiByb290CgpSVU4gJHtJTlNUQUxMX0NPTU1BTkR9ICYmIFwKICAgIHdnZXQgaHR0cHM6Ly9nby5kZXYvZGwvZ28ke2dvdmVyc2lvbn0ubGludXgtYW1kNjQudGFyLmd6ICYmIHRhciAtQyAvdXNyL2xvY2FsIC14emYgZ28qLnRhci5neiAKV09SS0RJUiAvClJVTiBnaXQgY2xvbmUgaHR0cHM6Ly9naXRodWIuY29tL2NyaS1vL2NyaS1vLmdpdCAtYiByZWxlYXNlLSR7azhzdmVyc2lvbn0KV09SS0RJUiAvY3JpLW8KUlVOIHNlZCAtaSAgJ3MvMjQwLzYwMC8nIGludGVybmFsL29jaS9vY2kuZ28KUlVOIG1ha2UKUlVOIHB3ZApSVU4gbHMgLWwKRU9GCgojIEV4dHJhY3QgdGhlIGNvbXBpbGVkIGNyaW8gYmluYXJ5CmNvbnRhaW5lcl9pZD0kKHBvZG1hbiBjcmVhdGUgYnVpbGRjcmlvKQpwb2RtYW4gY3AgJGNvbnRhaW5lcl9pZDovY3JpLW8vYmluL2NyaW8gLi9jcmlvCnBvZG1hbiBybSAkY29udGFpbmVyX2lkCmVjaG8gIkNSSS1PIGJpbmFyeSBleHRyYWN0ZWQgdG8gLi9jcmlvIgoKb3N0cmVlIGFkbWluIHVubG9jayAtLWhvdGZpeCB8fCB0cnVlCiMgQmFja3VwIHRoZSBleGlzdGluZyBDUkktTyBiaW5hcnkgb25seSBpZiBubyBiYWNrdXAgZXhpc3RzCkNSSU9fQklOQVJZPSIvdXNyL2Jpbi9jcmlvIgpCQUNLVVBfUEFUSD0iJHtDUklPX0JJTkFSWX0uYmFja3VwIgoKaWYgWyAhIC1mICIkQkFDS1VQX1BBVEgiIF07IHRoZW4KICAgIGlmIFsgLWYgIiRDUklPX0JJTkFSWSIgXTsgdGhlbgogICAgICAgIGVjaG8gIkJhY2tpbmcgdXAgZXhpc3RpbmcgQ1JJLU8gYmluYXJ5IHRvICRCQUNLVVBfUEFUSCIKICAgICAgICBjcCAtcCAiJENSSU9fQklOQVJZIiAiJEJBQ0tVUF9QQVRIIgogICAgICAgIGVjaG8gIkJhY2t1cCBjb21wbGV0ZWQiCiAgICBlbHNlCiAgICAgICAgZWNobyAiV2FybmluZzogRXhpc3RpbmcgQ1JJLU8gYmluYXJ5IG5vdCBmb3VuZCBhdCAkQ1JJT19CSU5BUlkiCiAgICBmaQplbHNlCiAgICBlY2hvICJCYWNrdXAgYWxyZWFkeSBleGlzdHMgYXQgJEJBQ0tVUF9QQVRILCBza2lwcGluZyBiYWNrdXAiCmZpCgojIFN0b3AgQ1JJLU8gc2VydmljZQplY2hvICJTdG9wcGluZyBDUkktTyBzZXJ2aWNlIgpzeXN0ZW1jdGwgc3RvcCBjcmlvCgojIFJlcGxhY2Ugd2l0aCB0aGUgbmV3IGNvbXBpbGVkIGJpbmFyeQplY2hvICJSZXBsYWNpbmcgQ1JJLU8gYmluYXJ5IHdpdGggbmV3bHkgY29tcGlsZWQgdmVyc2lvbiIKY3AgLi9jcmlvICIkQ1JJT19CSU5BUlkiCmNobW9kICt4ICIkQ1JJT19CSU5BUlkiCgojIFN0YXJ0IENSSS1PIHNlcnZpY2UKZWNobyAiU3RhcnRpbmcgQ1JJLU8gc2VydmljZSIKc3lzdGVtY3RsIHN0YXJ0IGNyaW8KCmVjaG8gIkNSSS1PIGJpbmFyeSByZXBsYWNlZCBzdWNjZXNzZnVsbHkiCmVjaG8gIlRvIHJlc3RvcmUgdGhlIG9yaWdpbmFsIGJpbmFyeSwgcnVuOiBzeXN0ZW1jdGwgc3RvcCBjcmlvICYmIGNwICRCQUNLVVBfUEFUSCAkQ1JJT19CSU5BUlkgJiYgc3lzdGVtY3RsIHN0YXJ0IGNyaW8iCnBvcGQKCmV4aXQgMAo=
+    systemd:
+      units:
+        - name: crio-setup.service
+          enabled: true
+          contents: |
+            [Unit]
+            Description=Download and Replace CRI-O Binary
+            After=network-online.target
+            Wants=network-online.target
+
+            [Service]
+            Type=oneshot
+            ExecStart=/usr/local/bin/crio-setup.sh
+            RemainAfterExit=yes
+
+            [Install]
+            WantedBy=multi-user.target
+
