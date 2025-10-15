@@ -9,7 +9,46 @@ k8sversion="$(oc version -o json | jq -r '.serverVersion | "\(.major).\(.minor)"
 # /usr/bin/crio --version | grep "GoVersion:" | sed -E 's/.*go([0-9.]+).*/\1/'
 
 goversion=$(oc version -o json | jq -r '.serverVersion.goVersion | capture("go(?<ver>[0-9.]+)") | .ver')
-INSTALL_COMMAND="dnf install -y make wget gcc gcc-c++ openssl openssl-devel git gpgme-devel libseccomp-devel glibc-static clang-devel device-mapper-devel xz patch" 
+INSTALL_COMMAND="dnf install -y make wget gcc gcc-c++ openssl openssl-devel git gpgme-devel libseccomp-devel glibc-static clang-devel device-mapper-devel xz patch"
+
+# Extract major, minor, and patch versions
+IFS='.' read -r major minor patch <<< "$goversion"
+
+# Function to check if container image exists and can be pulled
+check_and_pull_image() {
+    local version=$1
+    local image="registry.access.redhat.com/ubi9/go-toolset:${version}"
+    echo "Attempting to pull image: $image"
+    if podman pull "$image" 2>/dev/null; then
+        echo "Successfully pulled image: $image"
+        return 0
+    else
+        echo "Failed to pull image: $image"
+        return 1
+    fi
+}
+
+# Try to find a valid Go version by reducing patch version
+found_version=""
+current_patch=$patch
+
+while [ $current_patch -ge 0 ]; do
+    test_version="${major}.${minor}.${current_patch}"
+    if check_and_pull_image "$test_version"; then
+        found_version="$test_version"
+        break
+    fi
+    ((current_patch--))
+done
+
+# If no version found, exit with error
+if [ -z "$found_version" ]; then
+    echo "Error: Could not find a pullable Go toolset image for version ${major}.${minor}.x"
+    exit 1
+fi
+
+echo "Using Go version: $found_version"
+goversion="$found_version"
 
 mkdir -p /tmp/buildcrio
 pushd /tmp/buildcrio
@@ -35,6 +74,15 @@ container_id=$(podman create buildcrio)
 podman cp $container_id:/cri-o/bin/crio ./crio
 podman rm $container_id
 echo "CRI-O binary extracted to ./crio"
+
+# Verify the binary executes properly
+echo "Verifying CRI-O binary..."
+if ./crio --version; then
+    echo "CRI-O binary verification successful"
+else
+    echo "Error: CRI-O binary failed to execute"
+    exit 1
+fi
 
 ostree admin unlock --hotfix || true
 # Backup the existing CRI-O binary only if no backup exists
