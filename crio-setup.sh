@@ -84,38 +84,14 @@ else
     exit 1
 fi
 
-ostree admin unlock --hotfix || true
-# Backup the existing CRI-O binary only if no backup exists
-CRIO_BINARY="/usr/bin/crio"
-BACKUP_PATH="${CRIO_BINARY}.backup"
+# Copy the compiled binary to /usr/local/bin/crio
+CRIO_CUSTOM_BINARY="/usr/local/bin/crio"
+echo "Installing CRI-O binary to $CRIO_CUSTOM_BINARY"
+cp ./crio "$CRIO_CUSTOM_BINARY"
+chmod +x "$CRIO_CUSTOM_BINARY"
 
-if [ ! -f "$BACKUP_PATH" ]; then
-    if [ -f "$CRIO_BINARY" ]; then
-        echo "Backing up existing CRI-O binary to $BACKUP_PATH"
-        cp -p "$CRIO_BINARY" "$BACKUP_PATH"
-        echo "Backup completed"
-    else
-        echo "Warning: Existing CRI-O binary not found at $CRIO_BINARY"
-    fi
-else
-    echo "Backup already exists at $BACKUP_PATH, skipping backup"
-fi
-
-# Stop CRI-O service
-echo "Stopping CRI-O service"
-systemctl stop crio
-
-# Replace with the new compiled binary
-echo "Replacing CRI-O binary with newly compiled version"
-cp ./crio "$CRIO_BINARY"
-chmod +x "$CRIO_BINARY"
-
-# Start CRI-O service
-echo "Starting CRI-O service"
-systemctl start crio
-
-echo "CRI-O binary replaced successfully"
-echo "To restore the original binary, run: systemctl stop crio && cp $BACKUP_PATH $CRIO_BINARY && systemctl start crio"
+echo "CRI-O binary installed successfully to $CRIO_CUSTOM_BINARY"
+echo "The systemd drop-in will configure crio.service to use this binary"
 popd
 
 exit 0
