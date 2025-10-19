@@ -1,0 +1,10 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: KubeletConfig
+metadata:
+  name: kubelet-runtime-timeout-kata
+spec:
+  machineConfigPoolSelector:
+    matchLabels:
+      pools.operator.machineconfiguration.openshift.io/kata-oc: ""
+  kubeletConfig:
+    runtimeRequestTimeout: "15m"
